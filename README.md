@@ -27,6 +27,7 @@ améliorer les modèles de prévision de la demande électrique.
 ## 🏗️ Architecture technique
 
 
+```text
 ┌──────────────────────────────────────────────────────────┐
 │                    SOURCES DE DONNÉES                    │
 │  InfoClimat API  │  Weather Underground  │  Fichiers CSV │
@@ -49,6 +50,7 @@ améliorer les modèles de prévision de la demande électrique.
 │                       DBT                               │
 │         Transformation, Tests, Documentation            │
 └─────────────────────────────────────────────────────────┘
+
 
 
 ## 🛠️ Stack technique
