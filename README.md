@@ -27,7 +27,7 @@ améliorer les modèles de prévision de la demande électrique.
 ## 🏗️ Architecture technique
 
 
-┌─────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────┐
 │                    SOURCES DE DONNÉES                    │
 │  InfoClimat API  │  Weather Underground  │  Fichiers CSV │
 └────────┬─────────────────────┬───────────────────┬───────┘
@@ -41,14 +41,15 @@ améliorer les modèles de prévision de la demande électrique.
                           ▼
 ┌─────────────────────────────────────────────────────────┐
 │                    POSTGRESQL                           │
-│  RAW → STAGING → INTERMEDIATE → MARTS                  │
+│  RAW → STAGING → INTERMEDIATE → MARTS                   │
 └─────────────────────────┬───────────────────────────────┘
                           │
                           ▼
 ┌─────────────────────────────────────────────────────────┐
 │                       DBT                               │
-│         Transformation, Tests, Documentation           │
+│         Transformation, Tests, Documentation            │
 └─────────────────────────────────────────────────────────┘
+
 
 ## 🛠️ Stack technique
 
