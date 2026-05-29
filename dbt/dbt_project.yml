@@ -1,0 +1,79 @@
+﻿# 🐳 Docker - Configuration
+
+## Services
+
+### PostgreSQL 15
+- Port : 5432
+- Variables d'environnement : voir .env
+
+### pgAdmin 4
+- Port : 5050
+- URL : http://localhost:5050
+
+## Démarrage
+
+\\\ash
+cd docker
+docker-compose up -d
+\\\
+
+## Arrêt
+
+\\\ash
+docker-compose down
+\\\
+
+## Logs
+
+\\\ash
+docker-compose logs -f postgres
+\\\
+"@ | Out-File -Encoding UTF8 "docker/README.md"
+Write-Host "✅ docker/README.md créé" -ForegroundColor Green
+
+# ============================================================
+# 6. dbt/dbt_project.yml
+# ============================================================
+@"
+name: 'greencoop'
+version: '1.0.0'
+config-version: 2
+
+profile: 'greencoop'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+data-paths: ["data"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  greencoop:
+    raw:
+      +materialized: view
+      +schema: raw
+      
+    staging:
+      +materialized: view
+      +schema: staging
+      
+    intermediate:
+      +materialized: table
+      +schema: intermediate
+      
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  quote_columns: false
+
+vars:
+  dbt_project: 'greencoop'
+  dbt_version: '1.7'

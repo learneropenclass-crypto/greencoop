@@ -1,0 +1,52 @@
+﻿version: 2
+
+models:
+  - name: fct_weather_observations
+    description: "Table de faits des observations météorologiques avec contrôle qualité"
+    columns:
+      - name: observation_id
+        description: "Identifiant unique de l'observation"
+        tests:
+          - unique
+          - not_null
+
+      - name: datetime
+        description: "Timestamp de l'observation"
+        tests:
+          - not_null
+
+      - name: station_name
+        description: "Nom de la station"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Bergues', 'Hazebrouck', 'Armentières', 'Lille-Lesquin', 'Ichtegem', 'La Madeleine']
+
+      - name: temperature
+        description: "Température en °C"
+        tests:
+          - not_null
+
+      - name: humidity
+        description: "Humidité relative en %"
+
+      - name: data_quality_flag
+        description: "Indicateur de qualité des données"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['valid', 'invalid']
+
+  - name: dim_weather_stations
+    description: "Dimension des stations météorologiques"
+    columns:
+      - name: station_id
+        description: "Identifiant unique de la station"
+        tests:
+          - unique
+          - not_null
+
+      - name: station_name
+        description: "Nom de la station"
+        tests:
+          - not_null

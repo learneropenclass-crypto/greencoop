@@ -1,11 +1,8 @@
-# 🌱 GreenAndCoop - Pipeline de données météorologiques
+﻿# 🌱 GreenAndCoop - Pipeline de données météorologiques
 
 ## 📋 Contexte du projet
 
-GreenAndCoop est un fournisseur coopératif français d'électricité d'origine 
-renouvelable dans les Hauts-de-France. Ce projet **Forecast 2.0** vise à 
-intégrer des données météorologiques de stations semi-professionnelles pour 
-améliorer les modèles de prévision de la demande électrique.
+GreenAndCoop est un fournisseur coopératif français d'électricité d'origine renouvelable dans les Hauts-de-France. Ce projet **Forecast 2.0** vise à intégrer des données météorologiques de stations semi-professionnelles pour améliorer les modèles de prévision de la demande électrique.
 
 ## 🎯 Objectifs
 
@@ -26,85 +23,108 @@ améliorer les modèles de prévision de la demande électrique.
 
 ## 🏗️ Architecture technique
 
-
-┌──────────────────────────────────────────────────────────┐
-│                    SOURCES DE DONNÉES                    │
-│  InfoClimat API  │  Weather Underground  │  Fichiers CSV │
-└────────┬─────────────────────┬───────────────────┬───────┘
-         │                     │                   │
-         ▼                     ▼                   ▼
-┌─────────────────────────────────────────────────────────┐
-│                      AIRBYTE                            │
-│              Ingestion & Synchronisation                │
-└─────────────────────────┬───────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│                    POSTGRESQL                           │
-│  RAW → STAGING → INTERMEDIATE → MARTS                   │
-└─────────────────────────┬───────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│                       DBT                               │
-│         Transformation, Tests, Documentation            │
-└─────────────────────────────────────────────────────────┘
-
+\\\
+SOURCES
+  ├─ InfoClimat API
+  ├─ Weather Underground
+  └─ Fichiers CSV
+       ↓
+    AIRBYTE (Ingestion)
+       ↓
+  POSTGRESQL
+  ├─ raw/        (Données brutes)
+  ├─ staging/    (Nettoyage)
+  ├─ intermediate/ (Transformation)
+  └─ marts/      (Tables finales)
+       ↓
+      DBT
+  ├─ Tests qualité
+  ├─ Documentation
+  └─ Data Scientists
+\\\
 
 ## 🛠️ Stack technique
 
 | Outil | Version | Usage |
 |-------|---------|-------|
 | Docker | latest | Conteneurisation |
-| Docker Compose | v2 | Orchestration locale |
 | PostgreSQL | 15 | Base de données |
 | Airbyte | latest | Ingestion de données |
 | dbt-core | 1.7+ | Transformation |
 | Python | 3.10+ | Scripts & notebooks |
 
 ## 📁 Structure du projet
+
+\\\
 greencoop/
 ├── README.md
-├── .env.example              # Template variables d'environnement
+├── .env.example
 ├── .gitignore
 ├── docker/
-│   └── docker-compose.yml    # PostgreSQL + Airbyte
+│   ├── docker-compose.yml
+│   └── README.md
 ├── dbt/
 │   ├── dbt_project.yml
 │   ├── profiles.yml.example
 │   └── models/
-│       ├── raw/              # Données brutes ingérées
-│       ├── staging/          # Nettoyage et typage
-│       ├── intermediate/     # Jointures et enrichissement
-│       └── marts/            # Tables finales pour Data Scientists
+│       ├── raw/
+│       │   └── sources.yml
+│       ├── staging/
+│       │   ├── stg_infoclimat.sql
+│       │   └── stg_weather_underground.sql
+│       ├── intermediate/
+│       │   └── int_weather_unified.sql
+│       └── marts/
+│           ├── dim_weather_stations.sql
+│           ├── fct_weather_observations.sql
+│           └── schema.yml
 ├── data/
-│   └── raw/                  # Fichiers sources
-└── notebooks/
-    └── exploration.ipynb     # Analyse exploratoire
+│   └── raw/
+│       ├── Data_Source1_011024-071024.json
+│       ├── Weather_Underground_Ichtegem_BE.xlsx
+│       ├── Weather_Underground_La_Madeleine_FR.xlsx
+│       └── README.md
+├── notebooks/
+│   └── exploration.ipynb
+└── docs/
+\\\
 
 ## 🚀 Installation et démarrage
 
 ### Prérequis
+
 - Docker Desktop installé
 - Python 3.10+
 - Git
 
 ### 1. Cloner le repository
-```bash
+
+\\\ash
 git clone https://github.com/learneropenclass-crypto/greencoop.git
 cd greencoop
-2. Configurer les variables d'environnement
+\\\
+
+### 2. Configurer les variables d'environnement
+
+\\\ash
 cp .env.example .env
 # Éditer .env avec vos propres valeurs
-3. Lancer PostgreSQL et Airbyte
+\\\
+
+### 3. Lancer PostgreSQL et pgAdmin
+
+\\\ash
 cd docker
 docker-compose up -d
-4. Accéder aux interfaces
+\\\
 
-Airbyte : http://localhost:8000
-PostgreSQL : localhost:5432
+**Accès :**
+- pgAdmin : http://localhost:5050
+- PostgreSQL : localhost:5432
 
-5. Installer dbt
+### 4. Installer dbt
+
+\\\ash
 pip install dbt-postgres
 cd dbt
 cp profiles.yml.example profiles.yml
@@ -112,27 +132,57 @@ cp profiles.yml.example profiles.yml
 dbt debug    # Vérifier la connexion
 dbt run      # Lancer les transformations
 dbt test     # Lancer les tests qualité
-🔄 Pipeline de données
+\\\
+
+## 🔄 Pipeline de données
+
+\\\
 1. COLLECT   → Airbyte synchronise les sources toutes les 24h
 2. RAW       → Données brutes stockées sans transformation
 3. STAGING   → Nettoyage, typage, renommage des colonnes
 4. INTERMEDIATE → Jointures entre stations, calculs intermédiaires
 5. MARTS     → Tables finales optimisées pour les Data Scientists
-✅ Contrôle qualité des données
+\\\
+
+## ✅ Contrôle qualité des données
+
 Les tests dbt vérifient automatiquement :
 
-Not null : colonnes critiques non vides
-Unique : pas de doublons sur les clés
-Accepted values : valeurs dans les plages attendues
-Relationships : intégrité référentielle
+- **Not null** : colonnes critiques non vides
+- **Unique** : pas de doublons sur les clés
+- **Accepted values** : valeurs dans les plages attendues
+- **Relationships** : intégrité référentielle
 
-📊 Schéma de la base de données
-Voir docs/schema_etoile.png
-🔒 Sécurité
+## 📊 Tables finales
 
-Les credentials ne sont jamais committés sur GitHub
-Utiliser .env (ignoré par git) pour les mots de passe
-profiles.yml dbt également ignoré par git
+### fct_weather_observations
+Table de faits contenant :
+- observation_id (PK)
+- datetime
+- station_name
+- temperature, humidity, pressure
+- data_quality_flag
 
-👤 Auteur
-Projet réalisé dans le cadre de la formation Data Engineer - OpenClassroomsEntreprise fictive : GreenAndCoop, Hauts-de-France
+### dim_weather_stations
+Dimension contenant :
+- station_id (PK)
+- station_name
+- coordinates (latitude, longitude)
+- country
+
+## 🔒 Sécurité
+
+- ✅ Les credentials ne sont jamais committés sur GitHub
+- ✅ Utiliser \.env\ (ignoré par git) pour les mots de passe
+- ✅ \dbt/profiles.yml\ également ignoré par git
+- ✅ Fichiers sensibles dans \.gitignore\
+
+## 👤 Auteur
+
+Projet réalisé dans le cadre de la formation Data Engineer - OpenClassrooms
+
+Entreprise fictive : GreenAndCoop, Hauts-de-France
+
+---
+
+**Dernière mise à jour :** 29/05/2026

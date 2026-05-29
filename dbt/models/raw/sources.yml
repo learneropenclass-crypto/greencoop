@@ -1,0 +1,32 @@
+﻿version: 2
+
+sources:
+  - name: airbyte_raw
+    description: "Sources de données brutes ingérées via Airbyte"
+    tables:
+      - name: infoclimat_bergues
+        description: "Station InfoClimat - Bergues (Nord, France)"
+        columns:
+          - name: datetime
+            description: "Timestamp de l'observation"
+          - name: temperature
+            description: "Température en °C"
+          - name: humidity
+            description: "Humidité relative en %"
+          - name: pressure
+            description: "Pression en hPa"
+
+      - name: infoclimat_hazebrouck
+        description: "Station InfoClimat - Hazebrouck"
+
+      - name: infoclimat_armendieres
+        description: "Station InfoClimat - Armentières"
+
+      - name: infoclimat_lille_lesquin
+        description: "Station InfoClimat - Lille-Lesquin"
+
+      - name: weather_underground_ichtegem
+        description: "Station Weather Underground - Ichtegem (Belgique)"
+
+      - name: weather_underground_la_madeleine
+        description: "Station Weather Underground - La Madeleine (France)"
